@@ -1,0 +1,54 @@
+# 🐍 Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+
+# 📦 Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# 📄 Dependency logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 🧪 Testing & Coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.cache
+.pytest_cache/
+
+# 🧰 IDEs & Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 📁 OS-specific
+.DS_Store
+Thumbs.db
+
+# 🔐 Secrets (if any)
+.env
+*.env
+
+# 📊 SQLite (optional if using SQLite locally)
+*.db
+*.sqlite3
+
+# 📜 Logs
+*.log
+
+# 🧪 Jupyter (if used for prototyping)
+.ipynb_checkpoints
+
+# 🧼 Misc
+*.bak
+*.swp
+*.tmp
