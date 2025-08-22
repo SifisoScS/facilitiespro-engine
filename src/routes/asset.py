@@ -1,3 +1,4 @@
+from datetime import timezone
 from flask import Blueprint, jsonify, request
 from src.models.asset import Asset, db
 from datetime import datetime
@@ -78,7 +79,7 @@ def update_asset(asset_id):
     try:
         asset = Asset.query.get_or_404(asset_id)
         data = request.json
-        
+
         asset.asset_tag = data.get('asset_tag', asset.asset_tag)
         asset.name = data.get('name', asset.name)
         asset.description = data.get('description', asset.description)
@@ -86,21 +87,21 @@ def update_asset(asset_id):
         asset.location = data.get('location', asset.location)
         asset.condition = data.get('condition', asset.condition)
         asset.assigned_to = data.get('assigned_to', asset.assigned_to)
-        asset.updated_at = datetime.utcnow()
-        
+        asset.updated_at = datetime.now(timezone.utc)
+
         if data.get('purchase_date'):
             asset.purchase_date = datetime.strptime(data['purchase_date'], '%Y-%m-%d').date()
         if data.get('warranty_expiry'):
             asset.warranty_expiry = datetime.strptime(data['warranty_expiry'], '%Y-%m-%d').date()
-        
+
         db.session.commit()
-        
+
         return jsonify({
             'success': True,
             'data': asset.to_dict(),
             'message': 'Asset updated successfully'
         })
-        
+
     except Exception as e:
         return jsonify({
             'success': False,
@@ -134,19 +135,16 @@ def delete_asset(asset_id):
 @asset_bp.route('/assets/scan/<string:barcode>', methods=['GET'])
 def scan_asset(barcode):
     """Get asset by barcode/asset tag"""
-    asset = Asset.query.filter_by(asset_tag=barcode).first()
-    
-    if not asset:
+    if asset := Asset.query.filter_by(asset_tag=barcode).first():
+        return jsonify({
+            'success': True,
+            'data': asset.to_dict(),
+            'message': 'Asset found successfully'
+        })
+    else:
         return jsonify({
             'success': False,
             'data': None,
             'message': 'Asset not found',
             'errors': ['No asset found with this barcode']
         }), 404
-    
-    return jsonify({
-        'success': True,
-        'data': asset.to_dict(),
-        'message': 'Asset found successfully'
-    })
-
