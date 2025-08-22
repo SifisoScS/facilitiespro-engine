@@ -91,39 +91,44 @@ def get_recent_tickets():
 def get_recent_activities():
     """Get recent activities for dashboard"""
     try:
-        # This is a simplified version - in a real app, you'd have an activities table
-        activities = []
-        
         # Get recent tickets
         recent_tickets = Ticket.query.order_by(Ticket.created_at.desc()).limit(5).all()
-        for ticket in recent_tickets:
-            activities.append({
+        activities = [
+            {
                 'type': 'ticket_created',
                 'description': f'New ticket created: {ticket.title}',
                 'timestamp': ticket.created_at.isoformat(),
-                'user': ticket.creator.username if ticket.creator else 'Unknown'
-            })
-        
+                'user': (
+                    ticket.creator.username if ticket.creator else 'Unknown'
+                ),
+            }
+            for ticket in recent_tickets
+        ]
         # Get recently checked out tools
         checked_out_tools = Tool.query.filter(Tool.status == 'in_use').order_by(Tool.checked_out_at.desc()).limit(5).all()
-        for tool in checked_out_tools:
-            if tool.checked_out_at:
-                activities.append({
-                    'type': 'tool_checkout',
-                    'description': f'Tool checked out: {tool.tool_name}',
-                    'timestamp': tool.checked_out_at.isoformat(),
-                    'user': tool.checked_out_user.username if tool.checked_out_user else 'Unknown'
-                })
-        
+        activities.extend(
+            {
+                'type': 'tool_checkout',
+                'description': f'Tool checked out: {tool.tool_name}',
+                'timestamp': tool.checked_out_at.isoformat(),
+                'user': (
+                    tool.checked_out_user.username
+                    if tool.checked_out_user
+                    else 'Unknown'
+                ),
+            }
+            for tool in checked_out_tools
+            if tool.checked_out_at
+        )
         # Sort activities by timestamp
         activities.sort(key=lambda x: x['timestamp'], reverse=True)
-        
+
         return jsonify({
             'success': True,
             'data': activities[:10],  # Return top 10 activities
             'message': f'Retrieved {len(activities[:10])} recent activities'
         })
-        
+
     except Exception as e:
         return jsonify({
             'success': False,
@@ -131,4 +136,3 @@ def get_recent_activities():
             'message': 'Failed to retrieve recent activities',
             'errors': [str(e)]
         }), 500
-
