@@ -1,610 +1,612 @@
-// FacilitiesPro Command Center JavaScript
-class FacilitiesCommandCenter {
+class FacilitiesManagementHub {
     constructor() {
-        this.currentView = 'dashboard';
+        this.currentProvider = null;
         this.init();
     }
 
     init() {
-        this.updateDates();
-        this.setupNavigation();
         this.loadDashboardData();
-        this.setupMobileOptimization();
+        this.setupEventListeners();
+        this.updateDateTime();
+        setInterval(() => this.updateDateTime(), 60000); // Update every minute
     }
 
-    updateDates() {
-        const lastAuditDate = new Date().toLocaleDateString('en-ZA');
-        const lastUpdated = new Date().toLocaleString('en-ZA', { dateStyle: 'medium', timeStyle: 'short' });
-        
-        const auditElement = document.getElementById('last-audit-date');
-        const updatedElement = document.getElementById('last-updated');
-        
-        if (auditElement) {
-          auditElement.textContent = lastAuditDate;
+    setupEventListeners() {
+        // Mobile menu toggle if exists
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', this.toggleMobileMenu.bind(this));
         }
-        if (updatedElement) {
-          updatedElement.textContent = lastUpdated;
-        }
-    }
 
-    setupMobileOptimization() {
-        // Touch event support for mobile
-        document.addEventListener('touchstart', (e) => {
-            // Handle touch events for better mobile experience
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            if (sidebar && !sidebar.contains(e.target) && !mobileMenuBtn?.contains(e.target)) {
+                this.closeMobileMenu();
+            }
         });
 
-        // Prevent zoom on double tap for better mobile UX
+        // Touch events for mobile
+        this.setupTouchEvents();
+    }
+
+    setupTouchEvents() {
+        // Prevent zoom on double tap for better mobile experience
         let lastTouchEnd = 0;
-        document.addEventListener('touchend', (e) => {
+        document.addEventListener('touchend', function (event) {
             const now = (new Date()).getTime();
             if (now - lastTouchEnd <= 300) {
-                e.preventDefault();
+                event.preventDefault();
             }
             lastTouchEnd = now;
         }, false);
     }
 
-    // Content for each navigation item
-    navContents = {
-        "asset-register": () => this.renderAssetRegister(),
-        "storeroom-view": () => this.renderStoreroomView(),
-        "work-order": () => this.renderWorkOrderPortal(),
-        "maintenance-calendar": () => this.renderMaintenanceCalendar(),
-        "compliance-docs": () => this.renderComplianceDocs(),
-        "shezi-methodology": () => this.renderSheziMethodology()
-    };
-
-    async renderAssetRegister() {
-        try {
-            const response = await fetch('/api/assets');
-            const data = await response.json();
-            
-            if (data.success) {
-                return `
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-xl font-semibold text-teal-400">Asset Register</h4>
-                        <button onclick="app.showCreateAssetModal()" class="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 text-sm">
-                            <i class="fas fa-plus mr-2"></i>Add Asset
-                        </button>
-                    </div>
-                    <p class="mb-4 text-white">A comprehensive list of all assets under management, including serial numbers, locations, and status.</p>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-white border border-gray-700 rounded">
-                            <thead class="bg-teal-700">
-                                <tr>
-                                    <th class="px-3 py-2 border border-gray-600">Asset Tag</th>
-                                    <th class="px-3 py-2 border border-gray-600">Name</th>
-                                    <th class="px-3 py-2 border border-gray-600">Location</th>
-                                    <th class="px-3 py-2 border border-gray-600">Condition</th>
-                                    <th class="px-3 py-2 border border-gray-600">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${data.data.map((asset, index) => `
-                                    <tr class="border border-gray-600 ${index % 2 === 1 ? 'bg-slate-700' : ''}">
-                                        <td class="px-3 py-2 border border-gray-700">${asset.asset_tag}</td>
-                                        <td class="px-3 py-2 border border-gray-700">${asset.name}</td>
-                                        <td class="px-3 py-2 border border-gray-700">${asset.location || 'N/A'}</td>
-                                        <td class="px-3 py-2 border border-gray-700">
-                                            <span class="px-2 py-1 rounded text-xs ${this.getConditionClass(asset.condition)}">${asset.condition}</span>
-                                        </td>
-                                        <td class="px-3 py-2 border border-gray-700">
-                                            <button onclick="app.viewAsset(${asset.id})" class="text-teal-400 hover:text-teal-300 mr-2 text-xs">View</button>
-                                            <button onclick="app.editAsset(${asset.id})" class="text-lime-400 hover:text-lime-300 text-xs">Edit</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-        } catch (error) {
-            console.error('Error loading assets:', error);
-            return '<p class="text-red-400">Error loading asset data.</p>';
-        }
-    }
-
-    async renderStoreroomView() {
-        try {
-            const response = await fetch('/api/tools');
-            const data = await response.json();
-            
-            if (data.success) {
-                const availableTools = data.data.filter(tool => tool.status === 'available').length;
-                const inUseTools = data.data.filter(tool => tool.status === 'in_use').length;
-                
-                return `
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-xl font-semibold text-teal-400">Live Storeroom View</h4>
-                        <button onclick="app.showCheckOutToolsModal()" class="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 text-sm">
-                            <i class="fas fa-tools mr-2"></i>Check Out Tools
-                        </button>
-                    </div>
-                    <p class="mb-4 text-white">Real-time inventory levels and storeroom status with current tool availability.</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div class="bg-slate-700 p-4 rounded-lg">
-                            <h5 class="text-lg font-semibold text-lime-400 mb-2">Available Tools</h5>
-                            <p class="text-3xl font-bold text-white">${availableTools}</p>
-                        </div>
-                        <div class="bg-slate-700 p-4 rounded-lg">
-                            <h5 class="text-lg font-semibold text-orange-400 mb-2">Tools in Use</h5>
-                            <p class="text-3xl font-bold text-white">${inUseTools}</p>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-white border border-gray-700 rounded">
-                            <thead class="bg-teal-700">
-                                <tr>
-                                    <th class="px-3 py-2 border border-gray-600">Tool Name</th>
-                                    <th class="px-3 py-2 border border-gray-600">Category</th>
-                                    <th class="px-3 py-2 border border-gray-600">Status</th>
-                                    <th class="px-3 py-2 border border-gray-600">Checked Out To</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${data.data.slice(0, 10).map((tool, index) => `
-                                    <tr class="border border-gray-600 ${index % 2 === 1 ? 'bg-slate-700' : ''}">
-                                        <td class="px-3 py-2 border border-gray-700">${tool.tool_name}</td>
-                                        <td class="px-3 py-2 border border-gray-700">${tool.tool_category || 'N/A'}</td>
-                                        <td class="px-3 py-2 border border-gray-700">
-                                            <span class="px-2 py-1 rounded text-xs ${this.getStatusClass(tool.status)}">${tool.status}</span>
-                                        </td>
-                                        <td class="px-3 py-2 border border-gray-700">${tool.checked_out_user_name || 'N/A'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-        } catch (error) {
-            console.error('Error loading storeroom data:', error);
-            return '<p class="text-red-400">Error loading storeroom data.</p>';
-        }
-    }
-
-    async renderWorkOrderPortal() {
-        try {
-            const response = await fetch('/api/tickets');
-            const data = await response.json();
-            
-            if (data.success) {
-                return `
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-xl font-semibold text-teal-400">Work Order Portal</h4>
-                        <button onclick="app.showCreateTicketModal()" class="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 text-sm">
-                            <i class="fas fa-plus mr-2"></i>Create Work Order
-                        </button>
-                    </div>
-                    <p class="mb-4 text-white">Manage and track active and completed work orders with priority and status indicators.</p>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left text-white border border-gray-700 rounded">
-                            <thead class="bg-teal-700">
-                                <tr>
-                                    <th class="px-3 py-2 border border-gray-600">Ticket ID</th>
-                                    <th class="px-3 py-2 border border-gray-600">Description</th>
-                                    <th class="px-3 py-2 border border-gray-600">Priority</th>
-                                    <th class="px-3 py-2 border border-gray-600">Status</th>
-                                    <th class="px-3 py-2 border border-gray-600">Assigned To</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${data.data.map((ticket, index) => `
-                                    <tr class="border border-gray-600 ${index % 2 === 1 ? 'bg-slate-700' : ''}">
-                                        <td class="px-3 py-2 border border-gray-700">#${ticket.id}</td>
-                                        <td class="px-3 py-2 border border-gray-700">${ticket.title}</td>
-                                        <td class="px-3 py-2 border border-gray-700">
-                                            <span class="px-2 py-1 rounded text-xs ${this.getPriorityClass(ticket.priority)}">${ticket.priority}</span>
-                                        </td>
-                                        <td class="px-3 py-2 border border-gray-700">${ticket.status}</td>
-                                        <td class="px-3 py-2 border border-gray-700">${ticket.assignee_name || 'Unassigned'}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-        } catch (error) {
-            console.error('Error loading work orders:', error);
-            return '<p class="text-red-400">Error loading work order data.</p>';
-        }
-    }
-
-    renderMaintenanceCalendar() {
-        const today = new Date();
-        const upcomingDates = [];
+    toggleMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
         
-        for (let i = 1; i <= 5; i++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() + (i * 5));
-            upcomingDates.push(date.toLocaleDateString('en-ZA'));
-        }
-
-        return `
-            <h4 class="text-xl font-semibold mb-3 text-teal-400">Maintenance Calendar</h4>
-            <p class="mb-4 text-white">Upcoming scheduled maintenance tasks and deadlines for all facilities.</p>
-            <ul class="list-disc list-inside text-white space-y-2">
-                <li><strong>${upcomingDates[0]}:</strong> HVAC system inspection - Building A</li>
-                <li><strong>${upcomingDates[1]}:</strong> Fire extinguisher replacement - Building B</li>
-                <li><strong>${upcomingDates[2]}:</strong> Elevator safety check - Building C</li>
-                <li><strong>${upcomingDates[3]}:</strong> Roof leak inspection - Building D</li>
-                <li><strong>${upcomingDates[4]}:</strong> Generator load test - Building B</li>
-            </ul>
-        `;
-    }
-
-    renderComplianceDocs() {
-        return `
-            <h4 class="text-xl font-semibold mb-3 text-teal-400">Compliance Documents</h4>
-            <p class="mb-4 text-white">Access to all ISO 41001 related compliance documents and audit reports.</p>
-            <ul class="list-disc list-inside text-white space-y-2">
-                <li><a class="underline hover:text-lime-400 cursor-pointer" tabindex="0">ISO 41001:2018 Certification Document</a></li>
-                <li><a class="underline hover:text-lime-400 cursor-pointer" tabindex="0">Last Audit Report - ${new Date().toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' })}</a></li>
-                <li><a class="underline hover:text-lime-400 cursor-pointer" tabindex="0">Facilities Management Policy</a></li>
-                <li><a class="underline hover:text-lime-400 cursor-pointer" tabindex="0">Safety and Compliance Procedures</a></li>
-            </ul>
-        `;
-    }
-
-    renderSheziMethodology() {
-        return `
-            <h4 class="text-xl font-semibold mb-3 text-teal-400">Shezi Methodology</h4>
-            <p class="mb-4 text-white">Overview of the Shezi Methodology for facilities management and asset stewardship.</p>
-            <p class="mb-4 text-white">The Shezi Methodology emphasizes disciplined asset tracking, proactive maintenance, and continuous improvement to ensure operational excellence and compliance with international standards.</p>
-            <div class="bg-slate-700 p-4 rounded-lg">
-                <h5 class="text-lg font-semibold text-lime-400 mb-2">Core Principles:</h5>
-                <ul class="list-disc list-inside text-white space-y-1">
-                    <li>Precision in asset documentation</li>
-                    <li>Proactive maintenance scheduling</li>
-                    <li>Continuous process improvement</li>
-                    <li>ISO 41001 compliance integration</li>
-                    <li>Data-driven decision making</li>
-                </ul>
-            </div>
-        `;
-    }
-
-    getConditionClass(condition) {
-        switch(condition) {
-            case 'good': return 'bg-green-600 text-white';
-            case 'fair': return 'bg-yellow-600 text-white';
-            case 'repair': return 'bg-orange-600 text-white';
-            case 'broken': return 'bg-red-600 text-white';
-            default: return 'bg-gray-600 text-white';
+        if (sidebar && overlay) {
+            sidebar.classList.toggle('translate-x-0');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
         }
     }
 
-    getStatusClass(status) {
-        switch(status) {
-            case 'available': return 'bg-green-600 text-white';
-            case 'in_use': return 'bg-orange-600 text-white';
-            case 'missing': return 'bg-red-600 text-white';
-            default: return 'bg-gray-600 text-white';
+    closeMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        
+        if (sidebar && overlay) {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+            overlay.classList.add('hidden');
         }
     }
 
-    getPriorityClass(priority) {
-        switch(priority) {
-            case 'high': return 'bg-red-600 text-white';
-            case 'medium': return 'bg-yellow-600 text-white';
-            case 'low': return 'bg-green-600 text-white';
-            default: return 'bg-gray-600 text-white';
+    updateDateTime() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('en-ZA');
+        const auditDateElement = document.getElementById('last-audit-date');
+        if (auditDateElement && !auditDateElement.textContent) {
+            auditDateElement.textContent = dateStr;
         }
-    }
-
-    async updateNavContent(key) {
-        const contentDiv = document.getElementById('nav-content');
-        if (this.navContents[key]) {
-            try {
-                const content = await this.navContents[key]();
-                contentDiv.innerHTML = content;
-                contentDiv.focus();
-            } catch (error) {
-                console.error('Error updating nav content:', error);
-                contentDiv.innerHTML = '<p class="text-red-400 text-center italic">Error loading content.</p>';
-            }
-        } else {
-            contentDiv.innerHTML = '<p class="text-white text-center italic">Content not available.</p>';
-        }
-    }
-
-    setupNavigation() {
-        const navButtons = document.querySelectorAll('.hexagon');
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const navKey = button.getAttribute('data-nav');
-                this.updateNavContent(navKey);
-            });
-            button.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    const navKey = button.getAttribute('data-nav');
-                    this.updateNavContent(navKey);
-                }
-            });
-        });
     }
 
     async loadDashboardData() {
         try {
+            // Load dashboard statistics
             const response = await fetch('/api/dashboard/stats');
-            const data = await response.json();
-            
-            if (data.success) {
+            if (response.ok) {
+                const data = await response.json();
                 this.updateDashboardMetrics(data.data);
             }
+            
+            // Load service provider summary data
+            const providerResponse = await fetch('/api/dashboard/service-providers-summary');
+            if (providerResponse.ok) {
+                const providerData = await providerResponse.json();
+                this.updateServiceProviderMetrics(providerData.data);
+            }
         } catch (error) {
-            console.error('Error loading dashboard data:', error);
+            console.log('Using static data for dashboard metrics');
+            // Use static data as fallback
+            this.updateDashboardMetrics({
+                overview: {
+                    total_tickets: 12,
+                    active_assets: 428,
+                    total_tools: 15,
+                    total_staff: 8
+                }
+            });
         }
     }
 
-    updateDashboardMetrics(stats) {
-        const totalAssetsEl = document.getElementById('total-assets');
-        const activeTicketsEl = document.getElementById('active-tickets');
+    updateDashboardMetrics(data) {
+        // Update stores & infrastructure metrics
+        if (data.overview) {
+            const storesAssets = document.getElementById('stores-assets');
+            const storesWorkorders = document.getElementById('stores-workorders');
+            
+            if (storesAssets) {
+              storesAssets.textContent = data.overview.active_assets || 428;
+            }
+            if (storesWorkorders) {
+              storesWorkorders.textContent = data.overview.total_tickets || 12;
+            }
+        }
+    }
+
+    updateServiceProviderMetrics(data) {
+        // Update service provider metrics from API data
+        Object.keys(data).forEach(providerCode => {
+            const provider = data[providerCode];
+            if (provider.metrics) {
+                Object.keys(provider.metrics).forEach(metricName => {
+                    const elementId = this.getMetricElementId(providerCode, metricName);
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        element.textContent = provider.metrics[metricName];
+                    }
+                });
+            }
+        });
+    }
+
+    getMetricElementId(providerCode, metricName) {
+        // Convert metric names to element IDs
+        const metricMap = {
+            'stores': {
+                'Assets Under Management': 'stores-assets',
+                'Inventory Accuracy': 'stores-accuracy',
+                'Active Work Orders': 'stores-workorders',
+                'Compliance Score': 'stores-reorders'
+            },
+            'leitch': {
+                'Hours This Week': 'leitch-hours',
+                'Tasks Completed': 'leitch-tasks',
+                'Active Projects': 'leitch-projects',
+                'Client Satisfaction': 'leitch-compliance'
+            },
+            'sabeliwe': {
+                'Hours This Week': 'sabeliwe-hours',
+                'Tasks Completed': 'sabeliwe-tasks',
+                'Active Projects': 'sabeliwe-projects',
+                'Garden Health Score': 'sabeliwe-compliance'
+            },
+            'csg': {
+                'Meals Served Today': 'csg-meals',
+                'Customer Satisfaction': 'csg-satisfaction',
+                'Special Events': 'csg-events',
+                'Food Safety Score': 'csg-compliance'
+            },
+            'livclean': {
+                'Areas Completed': 'livclean-areas',
+                'Quality Score': 'livclean-quality',
+                'Special Requests': 'livclean-requests',
+                'Compliance Rate': 'livclean-compliance'
+            }
+        };
         
-        if (totalAssetsEl) {
-            totalAssetsEl.textContent = stats.overview.active_assets || '428';
+        return metricMap[providerCode]?.[metricName] || null;
+    }
+
+    async showProviderContent(provider) {
+        this.currentProvider = provider;
+        const contentArea = document.getElementById('provider-content');
+        
+        if (!contentArea) {
+          return;
         }
-        if (activeTicketsEl) {
-            activeTicketsEl.textContent = stats.overview.total_tickets || '12';
+
+        try {
+            // Try to fetch real data from API
+            const response = await fetch(`/api/service-providers/${provider}`);
+            if (response.ok) {
+                const data = await response.json();
+                const providerData = this.formatApiProviderData(data.data);
+                contentArea.innerHTML = this.generateProviderHTML(providerData);
+            } else {
+                // Fallback to static data
+                const providerData = this.getProviderData(provider);
+                contentArea.innerHTML = this.generateProviderHTML(providerData);
+            }
+        } catch (error) {
+            console.log('Using static data for provider content');
+            const providerData = this.getProviderData(provider);
+            contentArea.innerHTML = this.generateProviderHTML(providerData);
+        }
+        
+        // Scroll to content area on mobile
+        if (window.innerWidth < 768) {
+            contentArea.scrollIntoView({ behavior: 'smooth' });
         }
     }
 
-    // Modal functionality
-    showModal(content) {
-        const modal = document.createElement('div');
-        modal.className = 'modal';
-        modal.style.display = 'block';
-        modal.innerHTML = `
-            <div class="modal-content">
-                ${content}
+    formatApiProviderData(apiData) {
+        // Convert API data to the format expected by generateProviderHTML
+        return {
+            name: apiData.name,
+            tagline: apiData.tagline,
+            icon: apiData.icon,
+            description: apiData.description,
+            services: apiData.services.map(service => service.name),
+            metrics: apiData.metrics.reduce((acc, metric) => {
+                acc[metric.metric_name] = metric.metric_value;
+                return acc;
+            }, {}),
+            recentActivity: apiData.recent_activities.map(activity => activity.description)
+        };
+    }
+
+    getProviderData(provider) {
+        const providers = {
+            stores: {
+                name: 'STORES & INFRASTRUCTURE',
+                tagline: 'Precision Management | ISO 41001 Excellence',
+                icon: 'fas fa-warehouse',
+                description: 'Comprehensive asset management and infrastructure oversight for Derivco Durban facilities.',
+                services: [
+                    'Asset Register Management',
+                    'Work Order Processing',
+                    'Inventory Control',
+                    'Compliance Monitoring'
+                ],
+                metrics: {
+                    'Assets Under Management': '428',
+                    'Inventory Accuracy': '97.3%',
+                    'Active Work Orders': '12',
+                    'Compliance Score': '100%'
+                },
+                recentActivity: [
+                    'Asset PROJ-001 registered and tagged',
+                    'Work order #WO-2025-001 completed',
+                    'Monthly inventory audit completed',
+                    'ISO 41001 compliance review passed'
+                ]
+            },
+            leitch: {
+                name: 'LEITCH LANDSCAPE',
+                tagline: 'Commercial Landscaping Services',
+                icon: 'fas fa-tree',
+                description: 'Professional landscaping and grounds maintenance services for corporate facilities.',
+                services: [
+                    'Landscape Design & Installation',
+                    'Grounds Maintenance',
+                    'Irrigation Systems',
+                    'Seasonal Plantings'
+                ],
+                metrics: {
+                    'Hours This Week': '24',
+                    'Tasks Completed': '9',
+                    'Active Projects': '3',
+                    'Client Satisfaction': '98%'
+                },
+                recentActivity: [
+                    'Completed weekly lawn maintenance',
+                    'Installed new irrigation system - Block A',
+                    'Seasonal flower bed preparation',
+                    'Tree pruning and health assessment'
+                ]
+            },
+            sabeliwe: {
+                name: 'SABELIWE GARDEN',
+                tagline: 'Garden & Property Maintenance',
+                icon: 'fas fa-leaf',
+                description: 'Specialized garden maintenance and property care services.',
+                services: [
+                    'Garden Maintenance',
+                    'Plant Care & Nurturing',
+                    'Pest Control',
+                    'Seasonal Garden Planning'
+                ],
+                metrics: {
+                    'Hours This Week': '18',
+                    'Tasks Completed': '7',
+                    'Active Projects': '2',
+                    'Garden Health Score': '95%'
+                },
+                recentActivity: [
+                    'Completed rose garden pruning',
+                    'Applied organic fertilizer treatment',
+                    'Pest control inspection passed',
+                    'New herb garden installation started'
+                ]
+            },
+            csg: {
+                name: 'CSG FOODS',
+                tagline: 'Canteen & Catering Services',
+                icon: 'fas fa-utensils',
+                description: 'Professional food service and catering for corporate dining facilities.',
+                services: [
+                    'Daily Meal Service',
+                    'Special Event Catering',
+                    'Menu Planning',
+                    'Food Safety Compliance'
+                ],
+                metrics: {
+                    'Meals Served Today': '342',
+                    'Customer Satisfaction': '94%',
+                    'Special Events': '2',
+                    'Food Safety Score': '100%'
+                },
+                recentActivity: [
+                    'Served 342 meals today',
+                    'Catered executive board meeting',
+                    'Weekly menu planning completed',
+                    'Food safety audit passed with excellence'
+                ]
+            },
+            livclean: {
+                name: 'LIVCLEAN',
+                tagline: 'Cleaning & Sanitation Services',
+                icon: 'fas fa-broom',
+                description: 'Professional cleaning and sanitation services for corporate facilities.',
+                services: [
+                    'Daily Office Cleaning',
+                    'Deep Sanitization',
+                    'Restroom Maintenance',
+                    'Waste Management'
+                ],
+                metrics: {
+                    'Areas Completed': '98%',
+                    'Quality Score': '4.8/5',
+                    'Special Requests': '2',
+                    'Compliance Rate': '100%'
+                },
+                recentActivity: [
+                    'Completed daily office cleaning rounds',
+                    'Deep sanitization of conference rooms',
+                    'Restroom supplies restocked',
+                    'Quality inspection passed - all areas'
+                ]
+            }
+        };
+
+        return providers[provider] || providers.stores;
+    }
+
+    generateProviderHTML(data) {
+        return `
+            <div class="text-white">
+                <div class="flex items-center mb-6">
+                    <div class="bg-teal-600 p-3 rounded-full mr-4">
+                        <i class="${data.icon} text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold">${data.name}</h3>
+                        <p class="text-teal-400">${data.tagline}</p>
+                    </div>
+                </div>
+
+                <p class="text-gray-300 mb-6">${data.description}</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Services -->
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold text-teal-400 mb-4">Services</h4>
+                        <ul class="space-y-2">
+                            ${data.services.map(service => `
+                                <li class="flex items-center">
+                                    <i class="fas fa-check text-lime-400 mr-2"></i>
+                                    <span>${service}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold text-teal-400 mb-4">Key Metrics</h4>
+                        <div class="space-y-3">
+                            ${Object.entries(data.metrics).map(([key, value]) => `
+                                <div class="flex justify-between">
+                                    <span class="text-gray-300">${key}</span>
+                                    <span class="text-lime-400 font-semibold">${value}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="mt-6 bg-slate-700 p-4 rounded-lg">
+                    <h4 class="text-lg font-semibold text-teal-400 mb-4">Recent Activity</h4>
+                    <div class="space-y-3">
+                        ${data.recentActivity.map(activity => `
+                            <div class="log-item">
+                                <div class="text-sm text-white">${activity}</div>
+                                <div class="text-xs text-gray-400">${this.getRandomTimeAgo()}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <button class="btn btn-primary" onclick="facilitiesHub.showProviderModal('${this.currentProvider}', 'schedule')">
+                        <i class="fas fa-calendar mr-2"></i>Schedule Service
+                    </button>
+                    <button class="btn btn-primary" onclick="facilitiesHub.showProviderModal('${this.currentProvider}', 'report')">
+                        <i class="fas fa-chart-bar mr-2"></i>View Reports
+                    </button>
+                    <button class="btn btn-primary" onclick="facilitiesHub.showProviderModal('${this.currentProvider}', 'contact')">
+                        <i class="fas fa-phone mr-2"></i>Contact Provider
+                    </button>
+                </div>
             </div>
         `;
-        document.body.appendChild(modal);
+    }
+
+    getRandomTimeAgo() {
+        const times = ['2 minutes ago', '15 minutes ago', '1 hour ago', '3 hours ago', 'Earlier today'];
+        return times[Math.floor(Math.random() * times.length)];
+    }
+
+    showProviderModal(provider, action) {
+        const modal = this.createModal();
+        const providerData = this.getProviderData(provider);
         
-        // Prevent body scroll when modal is open
-        document.body.style.overflow = 'hidden';
+        let modalContent = '';
         
-        // Add touch event handling for mobile
-        modal.addEventListener('touchstart', (e) => {
-            if (e.target === modal) {
-                this.closeModal();
-            }
-        });
+        switch (action) {
+            case 'schedule':
+                modalContent = this.generateScheduleModalContent(providerData);
+                break;
+            case 'report':
+                modalContent = this.generateReportModalContent(providerData);
+                break;
+            case 'contact':
+                modalContent = this.generateContactModalContent(providerData);
+                break;
+        }
         
-        // Close modal when clicking outside
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                this.closeModal();
-            }
-        });
+        modal.querySelector('.modal-content').innerHTML = modalContent;
+        modal.style.display = 'block';
+    }
+
+    generateScheduleModalContent(data) {
+        return `
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">Schedule Service - ${data.name}</h3>
+            <form onsubmit="facilitiesHub.handleScheduleSubmit(event)">
+                <div class="form-group">
+                    <label class="text-gray-700">Service Type</label>
+                    <select class="form-control text-gray-800 bg-white">
+                        ${data.services.map(service => `<option value="${service}">${service}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="text-gray-700">Preferred Date</label>
+                    <input type="date" class="form-control text-gray-800 bg-white" required>
+                </div>
+                <div class="form-group">
+                    <label class="text-gray-700">Preferred Time</label>
+                    <input type="time" class="form-control text-gray-800 bg-white" required>
+                </div>
+                <div class="form-group">
+                    <label class="text-gray-700">Special Requirements</label>
+                    <textarea class="form-control text-gray-800 bg-white" rows="3" placeholder="Any special requirements or notes..."></textarea>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button type="button" class="btn bg-gray-500 text-white" onclick="facilitiesHub.closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Schedule Service</button>
+                </div>
+            </form>
+        `;
+    }
+
+    generateReportModalContent(data) {
+        return `
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">Reports - ${data.name}</h3>
+            <div class="space-y-4">
+                <div class="bg-gray-100 p-4 rounded">
+                    <h4 class="font-semibold text-gray-800">Performance Summary</h4>
+                    <div class="mt-2 space-y-2">
+                        ${Object.entries(data.metrics).map(([key, value]) => `
+                            <div class="flex justify-between text-gray-700">
+                                <span>${key}</span>
+                                <span class="font-semibold">${value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="bg-gray-100 p-4 rounded">
+                    <h4 class="font-semibold text-gray-800">Recent Activities</h4>
+                    <div class="mt-2 space-y-1">
+                        ${data.recentActivity.map(activity => `
+                            <div class="text-sm text-gray-600">• ${activity}</div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <button class="btn bg-gray-500 text-white" onclick="facilitiesHub.closeModal()">Close</button>
+                    <button class="btn btn-primary" onclick="facilitiesHub.downloadReport('${this.currentProvider}')">Download Report</button>
+                </div>
+            </div>
+        `;
+    }
+
+    generateContactModalContent(data) {
+        return `
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">Contact - ${data.name}</h3>
+            <div class="space-y-4">
+                <div class="bg-gray-100 p-4 rounded">
+                    <h4 class="font-semibold text-gray-800">Contact Information</h4>
+                    <div class="mt-2 space-y-2 text-gray-700">
+                        <div><i class="fas fa-phone mr-2"></i> +27 31 123 4567</div>
+                        <div><i class="fas fa-envelope mr-2"></i> contact@${data.name.toLowerCase().replace(/\s+/g, '')}.co.za</div>
+                        <div><i class="fas fa-clock mr-2"></i> Mon-Fri: 8:00 AM - 5:00 PM</div>
+                    </div>
+                </div>
+                <form onsubmit="facilitiesHub.handleContactSubmit(event)">
+                    <div class="form-group">
+                        <label class="text-gray-700">Subject</label>
+                        <input type="text" class="form-control text-gray-800 bg-white" placeholder="Subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-gray-700">Message</label>
+                        <textarea class="form-control text-gray-800 bg-white" rows="4" placeholder="Your message..." required></textarea>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" class="btn bg-gray-500 text-white" onclick="facilitiesHub.closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        `;
+    }
+
+    createModal() {
+        let modal = document.getElementById('provider-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'provider-modal';
+            modal.className = 'modal';
+            modal.innerHTML = '<div class="modal-content"></div>';
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeModal();
+                }
+            });
+        }
+        return modal;
     }
 
     closeModal() {
-        const modal = document.querySelector('.modal');
+        const modal = document.getElementById('provider-modal');
         if (modal) {
-            modal.remove();
-            // Restore body scroll
-            document.body.style.overflow = '';
+            modal.style.display = 'none';
         }
     }
 
-    showCreateAssetModal() {
-        this.showModal(`
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Asset</h3>
-            <form id="createAssetForm">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Asset Tag</label>
-                    <input type="text" name="asset_tag" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                    <input type="text" name="name" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                    <input type="text" name="category" class="w-full border border-gray-300 rounded-md px-3 py-2">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                    <input type="text" name="location" class="w-full border border-gray-300 rounded-md px-3 py-2">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Condition</label>
-                    <select name="condition" class="w-full border border-gray-300 rounded-md px-3 py-2">
-                        <option value="good">Good</option>
-                        <option value="fair">Fair</option>
-                        <option value="repair">Needs Repair</option>
-                        <option value="broken">Broken</option>
-                    </select>
-                </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="app.closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700">Add Asset</button>
-                </div>
-            </form>
-        `);
-
-        document.getElementById("createAssetForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            this.createAsset(new FormData(e.target));
-        });
+    handleScheduleSubmit(event) {
+        event.preventDefault();
+        // Simulate API call
+        this.showNotification('Service scheduled successfully!', 'success');
+        this.closeModal();
     }
 
-    showCreateTicketModal() {
-        this.showModal(`
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Create New Work Order</h3>
-            <form id="createTicketForm">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                    <input type="text" name="title" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea name="description" rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2" required></textarea>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                    <select name="priority" class="w-full border border-gray-300 rounded-md px-3 py-2">
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                    <input type="text" name="location" class="w-full border border-gray-300 rounded-md px-3 py-2">
-                </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="app.closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700">Create Work Order</button>
-                </div>
-            </form>
-        `);
-
-        document.getElementById("createTicketForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            this.createTicket(new FormData(e.target));
-        });
+    handleContactSubmit(event) {
+        event.preventDefault();
+        // Simulate API call
+        this.showNotification('Message sent successfully!', 'success');
+        this.closeModal();
     }
 
-    showCheckOutToolsModal() {
-        this.showModal(`
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Check Out Tools</h3>
-            <form id="checkOutToolsForm">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tool Selection</label>
-                    <select name="tool_id" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
-                        <option value="">Select a tool...</option>
-                        <option value="1">Multimeter</option>
-                        <option value="2">Cordless Drill</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Checked Out To</label>
-                    <input type="text" name="user_name" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
-                </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="app.closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">Cancel</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700">Check Out</button>
-                </div>
-            </form>
-        `);
-
-        document.getElementById("checkOutToolsForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            this.checkOutTool(new FormData(e.target));
-        });
-    }
-
-    async createAsset(formData) {
-        try {
-            const assetData = {
-                asset_tag: formData.get("asset_tag"),
-                name: formData.get("name"),
-                category: formData.get("category"),
-                location: formData.get("location"),
-                condition: formData.get("condition"),
-            };
-
-            const response = await fetch("/api/assets", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(assetData),
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                this.closeModal();
-                this.showNotification("Asset added successfully!", "success");
-                // Refresh current view if it's asset register
-                const currentContent = document.getElementById('nav-content');
-                if (currentContent.innerHTML.includes('Asset Register')) {
-                    this.updateNavContent('asset-register');
-                }
-            } else {
-                this.showNotification("Failed to add asset", "error");
-            }
-        } catch (error) {
-            console.error("Error adding asset:", error);
-            this.showNotification("Error adding asset", "error");
-        }
-    }
-
-    async createTicket(formData) {
-        try {
-            const ticketData = {
-                title: formData.get('title'),
-                description: formData.get('description'),
-                priority: formData.get('priority'),
-                location: formData.get('location'),
-                created_by: 2 // Default to manager user
-            };
-
-            const response = await fetch('/api/tickets', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(ticketData)
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                this.closeModal();
-                this.showNotification('Work order created successfully!', 'success');
-                // Refresh current view if it's work order portal
-                const currentContent = document.getElementById('nav-content');
-                if (currentContent.innerHTML.includes('Work Order Portal')) {
-                    this.updateNavContent('work-order');
-                }
-            } else {
-                this.showNotification('Failed to create work order', 'error');
-            }
-        } catch (error) {
-            console.error('Error creating work order:', error);
-            this.showNotification('Error creating work order', 'error');
-        }
-    }
-
-    async checkOutTool(formData) {
-        try {
-            // This would need to be implemented in the backend
-            this.closeModal();
-            this.showNotification('Tool checked out successfully!', 'success');
-        } catch (error) {
-            console.error('Error checking out tool:', error);
-            this.showNotification('Error checking out tool', 'error');
-        }
+    downloadReport(provider) {
+        // Simulate report download
+        this.showNotification('Report download started...', 'info');
+        this.closeModal();
     }
 
     showNotification(message, type = 'info') {
         const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 px-6 py-3 rounded-md text-white z-50 ${
-            type === 'success' ? 'bg-green-500' : 
-            type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        notification.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 ${
+            type === 'success' ? 'bg-green-600' : 
+            type === 'error' ? 'bg-red-600' : 
+            'bg-blue-600'
         }`;
         notification.textContent = message;
+        
         document.body.appendChild(notification);
-
+        
         setTimeout(() => {
             notification.remove();
         }, 3000);
     }
+}
 
-    viewAsset(id) {
-        this.showNotification('Asset details view - Feature coming soon!', 'info');
-    }
-
-    editAsset(id) {
-        this.showNotification('Asset edit - Feature coming soon!', 'info');
-    }
+// Global functions for onclick handlers
+function showProviderContent(provider) {
+    facilitiesHub.showProviderContent(provider);
 }
 
 // Initialize the application
-const app = new FacilitiesCommandCenter();
+const facilitiesHub = new FacilitiesManagementHub();
 
+// Make it globally available for onclick handlers
+window.facilitiesHub = facilitiesHub;

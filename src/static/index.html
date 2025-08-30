@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <title>Derivco Durban Facilities Management Command Center</title>
+    <title>Derivco Durban Facilities Management Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <style>
@@ -87,6 +88,180 @@
             max-height: 85vh;
             overflow-y: auto;
         }
+        
+        /* Landscape Management Styles */
+        .landscape-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #008080;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00FF99;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #CCCCCC;
+        }
+        
+        .tab-button {
+            padding: 8px 15px;
+            background: #003366;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            margin-right: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .tab-button.active {
+            background: #008080;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #CCCCCC;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #008080;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .btn-primary {
+            background: #008080;
+            color: white;
+        }
+        
+        .company-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(0, 131, 143, 0.3);
+            color: #00FFCC;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .status-approved {
+            background: rgba(0, 128, 0, 0.3);
+            color: #00FF00;
+        }
+        
+        .status-pending {
+            background: rgba(255, 165, 0, 0.3);
+            color: #FFA500;
+        }
+        
+        .log-item {
+            border-left: 2px solid #008080;
+            padding-left: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .snapshot-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .snapshot-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #008080;
+        }
+        
+        .snapshot-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #008080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .system-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #008080;
+        }
+        /* Reduced size for service provider cards */
+        .service-provider-card {
+            padding: 10px;
+        }
+        .service-provider-card h4 {
+            font-size: 0.9rem;
+        }
+        .service-provider-card p {
+            font-size: 0.7rem;
+        }
+        .service-provider-card i {
+            font-size: 1.5rem;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -100,7 +275,7 @@
                     DERIVCO DURBAN FACILITIES
                 </h1>
                 <h2 class="text-xl text-teal-400 mt-2 sm:text-2xl md:text-3xl">
-                    STORES &amp; INFRASTRUCTURE ADMINISTRATION
+                    MANAGEMENT HUB
                 </h2>
                 <p class="text-lg text-lime-400 mt-1 sm:text-xl md:text-2xl font-semibold italic">
                     "Precision Management | ISO 41001 Excellence"
@@ -129,24 +304,86 @@
                 <h3 class="text-xl font-semibold text-white mb-4">
                     TODAY'S SNAPSHOT
                 </h3>
-                <ul class="space-y-3 text-white text-lg" id="metrics-list">
-                    <li class="flex items-center">
-                        <span class="text-lime-400 text-2xl mr-3">◉</span>
-                        <span id="total-assets">428</span> Assets Under Stewardship
-                    </li>
-                    <li class="flex items-center">
-                        <span class="text-lime-400 text-2xl mr-3">◉</span>
-                        <span id="inventory-accuracy">97.3%</span> Inventory Accuracy
-                    </li>
-                    <li class="flex items-center">
-                        <span class="text-lime-400 text-2xl mr-3">◉</span>
-                        <span id="active-tickets">12</span> Active Work Orders
-                    </li>
-                    <li class="flex items-center">
-                        <span class="text-lime-400 text-2xl mr-3">◉</span>
-                        <span id="reorder-items">3</span> Items Requiring Reorder
-                    </li>
-                </ul>
+                
+                <!-- Stores & Infrastructure -->
+                <div class="snapshot-card mb-4">
+                    <div class="snapshot-header">
+                        <div class="snapshot-icon">
+                            <i class="fas fa-warehouse text-white"></i>
+                        </div>
+                        <h4 class="font-semibold">STORES & INFRASTRUCTURE</h4>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div><span class="text-lime-400 font-semibold" id="stores-assets">428</span> Assets</div>
+                        <div><span class="text-lime-400 font-semibold" id="stores-accuracy">97.3%</span> Accuracy</div>
+                        <div><span class="text-lime-400 font-semibold" id="stores-workorders">12</span> Work Orders</div>
+                        <div><span class="text-lime-400 font-semibold" id="stores-reorders">3</span> Reorders Needed</div>
+                    </div>
+                </div>
+                
+                <!-- Leitch Landscape -->
+                <div class="snapshot-card mb-4">
+                    <div class="snapshot-header">
+                        <div class="snapshot-icon">
+                            <i class="fas fa-tree text-white"></i>
+                        </div>
+                        <h4 class="font-semibold">LEITCH LANDSCAPE</h4>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div><span class="text-lime-400 font-semibold" id="leitch-hours">24</span> Hours This Week</div>
+                        <div><span class="text-lime-400 font-semibold" id="leitch-tasks">9</span> Tasks Completed</div>
+                        <div><span class="text-lime-400 font-semibold" id="leitch-projects">3</span> Active Projects</div>
+                        <div><span class="text-lime-400 font-semibold" id="leitch-compliance">100%</span> Compliance</div>
+                    </div>
+                </div>
+                
+                <!-- Sabeliwe Garden -->
+                <div class="snapshot-card mb-4">
+                    <div class="snapshot-header">
+                        <div class="snapshot-icon">
+                            <i class="fas fa-leaf text-white"></i>
+                        </div>
+                        <h4 class="font-semibold">SABELIWE GARDEN</h4>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div><span class="text-lime-400 font-semibold" id="sabeliwe-hours">18</span> Hours This Week</div>
+                        <div><span class="text-lime-400 font-semibold" id="sabeliwe-tasks">7</span> Tasks Completed</div>
+                        <div><span class="text-lime-400 font-semibold" id="sabeliwe-projects">2</span> Active Projects</div>
+                        <div><span class="text-lime-400 font-semibold" id="sabeliwe-compliance">100%</span> Compliance</div>
+                    </div>
+                </div>
+                
+                <!-- CSG Foods -->
+                <div class="snapshot-card mb-4">
+                    <div class="snapshot-header">
+                        <div class="snapshot-icon">
+                            <i class="fas fa-utensils text-white"></i>
+                        </div>
+                        <h4 class="font-semibold">CSG FOODS</h4>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div><span class="text-lime-400 font-semibold" id="csg-meals">342</span> Meals Served</div>
+                        <div><span class="text-lime-400 font-semibold" id="csg-satisfaction">94%</span> Satisfaction</div>
+                        <div><span class="text-lime-400 font-semibold" id="csg-events">2</span> Special Events</div>
+                        <div><span class="text-lime-400 font-semibold" id="csg-compliance">100%</span> Hygiene Compliance</div>
+                    </div>
+                </div>
+                
+                <!-- LivClean -->
+                <div class="snapshot-card">
+                    <div class="snapshot-header">
+                        <div class="snapshot-icon">
+                            <i class="fas fa-broom text-white"></i>
+                        </div>
+                        <h4 class="font-semibold">LIVCLEAN</h4>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div><span class="text-lime-400 font-semibold" id="livclean-areas">98%</span> Areas Completed</div>
+                        <div><span class="text-lime-400 font-semibold" id="livclean-quality">4.8/5</span> Quality Score</div>
+                        <div><span class="text-lime-400 font-semibold" id="livclean-requests">2</span> Special Requests</div>
+                        <div><span class="text-lime-400 font-semibold" id="livclean-compliance">100%</span> Compliance</div>
+                    </div>
+                </div>
             </section>
             
             <!-- ISO 41001 Compliance Badge -->
@@ -161,65 +398,163 @@
                 </p>
                 <p class="text-white mt-2 text-sm">
                     Last Audit:
-                    <span class="font-semibold" id="last-audit-date"></span>
+                    <span class="font-semibold" id="last-audit-date">2025/08/10</span>
                 </p>
             </section>
             
-            <!-- Navigation Quicklinks -->
-            <section class="col-span-1 md:col-span-3 mt-6 md:mt-0">
+            <!-- Service Provider Cards -->
+            <section class="col-span-1 md:col-span-3">
                 <h3 class="text-xl font-semibold text-center text-white mb-6">
-                    NAVIGATION
+                    SERVICE PROVIDERS
                 </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 justify-items-center">
-                    <div aria-label="Navigate to Asset Register" class="hexagon" data-nav="asset-register" role="button" tabindex="0">
-                        <span>ASSET REGISTER</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <!-- Stores & Infrastructure -->
+                    <div class="bg-blue-900 service-provider-card rounded-lg border-2 border-teal-500 cursor-pointer hover:bg-blue-800 transition-colors" onclick="showProviderContent('stores')">
+                        <h4 class="font-semibold text-white text-center">STORES & INFRASTRUCTURE</h4>
+                        <p class="text-teal-400 text-center mt-1">"Precision Management | ISO 41001 Excellence"</p>
+                        <div class="flex justify-center mt-2">
+                            <i class="fas fa-warehouse text-teal-400"></i>
+                        </div>
                     </div>
-                    <div aria-label="Navigate to Live Storeroom View" class="hexagon bg-teal-600" data-nav="storeroom-view" role="button" tabindex="0">
-                        <span>LIVE STOREROOM VIEW</span>
+                    
+                    <!-- Leitch Landscape -->
+                    <div class="bg-blue-900 service-provider-card rounded-lg border-2 border-teal-500 cursor-pointer hover:bg-blue-800 transition-colors" onclick="showProviderContent('leitch')">
+                        <h4 class="font-semibold text-white text-center">LEITCH LANDSCAPE</h4>
+                        <p class="text-teal-400 text-center mt-1">Commercial Landscaping Services</p>
+                        <div class="flex justify-center mt-2">
+                            <i class="fas fa-tree text-teal-400"></i>
+                        </div>
                     </div>
-                    <div aria-label="Navigate to Work Order Portal" class="hexagon" data-nav="work-order" role="button" tabindex="0">
-                        <span>WORK ORDER PORTAL</span>
+                    
+                    <!-- Sabeliwe -->
+                    <div class="bg-blue-900 service-provider-card rounded-lg border-2 border-teal-500 cursor-pointer hover:bg-blue-800 transition-colors" onclick="showProviderContent('sabeliwe')">
+                        <h4 class="font-semibold text-white text-center">SABELIWE GARDEN</h4>
+                        <p class="text-teal-400 text-center mt-1">Garden & Property Maintenance</p>
+                        <div class="flex justify-center mt-2">
+                            <i class="fas fa-leaf text-teal-400"></i>
+                        </div>
                     </div>
-                    <div aria-label="Navigate to Maintenance Calendar" class="hexagon bg-teal-600" data-nav="maintenance-calendar" role="button" tabindex="0">
-                        <span>MAINTENANCE CALENDAR</span>
+                    
+                    <!-- CSG Foods -->
+                    <div class="bg-blue-900 service-provider-card rounded-lg border-2 border-teal-500 cursor-pointer hover:bg-blue-800 transition-colors" onclick="showProviderContent('csg')">
+                        <h4 class="font-semibold text-white text-center">CSG FOODS</h4>
+                        <p class="text-teal-400 text-center mt-1">Canteen & Catering Services</p>
+                        <div class="flex justify-center mt-2">
+                            <i class="fas fa-utensils text-teal-400"></i>
+                        </div>
                     </div>
-                    <div aria-label="Navigate to Compliance Documents" class="hexagon" data-nav="compliance-docs" role="button" tabindex="0">
-                        <span>COMPLIANCE DOCUMENTS</span>
-                    </div>
-                    <div aria-label="Navigate to Shezi Methodology" class="hexagon bg-teal-600" data-nav="shezi-methodology" role="button" tabindex="0">
-                        <span>SHEZI METHODOLOGY</span>
+                    
+                    <!-- LivClean -->
+                    <div class="bg-blue-900 service-provider-card rounded-lg border-2 border-teal-500 cursor-pointer hover:bg-blue-800 transition-colors" onclick="showProviderContent('livclean')">
+                        <h4 class="font-semibold text-white text-center">LIVCLEAN</h4>
+                        <p class="text-teal-400 text-center mt-1">Cleaning & Sanitation Services</p>
+                        <div class="flex justify-center mt-2">
+                            <i class="fas fa-broom text-teal-400"></i>
+                        </div>
                     </div>
                 </div>
-                <div aria-atomic="true" aria-live="polite" class="bg-blue-900 p-6 rounded-lg mt-8 min-h-[200px]" id="nav-content" tabindex="0">
-                    <p class="text-white text-center text-lg italic select-none">
-                        Please select a navigation item above to view its content.
-                    </p>
+            </section>
+            
+            <!-- Content Display Area -->
+            <section class="col-span-1 md:col-span-3 mt-6">
+                <div class="bg-blue-900 p-6 rounded-lg min-h-[400px]" id="provider-content">
+                    <div class="text-center text-white">
+                        <h3 class="text-xl font-semibold mb-4">Select a Service Provider</h3>
+                        <p class="text-teal-400">Click on any service provider card above to view detailed information and management options.</p>
+                    </div>
                 </div>
             </section>
             
             <!-- Signature System Preview -->
-            <section class="bg-blue-900 p-6 rounded-lg col-span-1 md:col-span-3 mt-6 md:mt-0">
-                <h3 class="text-xl font-semibold text-white text-center">
+            <section class="bg-blue-900 p-6 rounded-lg col-span-1 md:col-span-3 mt-6">
+                <h3 class="text-xl font-semibold text-white text-center mb-6">
                     YOUR SYSTEM AT WORK
                 </h3>
-                <p class="text-white mt-2 text-center italic max-w-xl mx-auto">
+                <p class="text-white mt-2 text-center italic max-w-xl mx-auto mb-6">
                     "Every tool tracked, every asset accounted for"
                 </p>
-                <img alt="Dashboard preview showing graphs, charts, and key metrics of the facilities management system" class="mt-6 w-full rounded-lg object-cover" height="300" src="https://storage.googleapis.com/a1aa/image/78777538-e324-4215-9210-9318f8ec39fa.jpg" width="600"/>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Performance Overview -->
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold text-teal-400 mb-4">Performance Overview</h4>
+                        
+                        <div class="system-stat">
+                            <span>Stores & Infrastructure Efficiency</span>
+                            <span class="text-lime-400">97.3%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 97.3%"></div>
+                        </div>
+                        
+                        <div class="system-stat">
+                            <span>Service Provider Compliance</span>
+                            <span class="text-lime-400">100%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                        
+                        <div class="system-stat">
+                            <span>Asset Tracking Accuracy</span>
+                            <span class="text-lime-400">98.7%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 98.7%"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity Log -->
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold text-teal-400 mb-4">Recent Activity</h4>
+                        
+                        <div class="log-item">
+                            <div class="text-sm text-white">Asset PROJ-001 checked out</div>
+                            <div class="text-xs text-gray-400">2 minutes ago</div>
+                        </div>
+                        
+                        <div class="log-item">
+                            <div class="text-sm text-white">Leitch Landscape task completed</div>
+                            <div class="text-xs text-gray-400">15 minutes ago</div>
+                        </div>
+                        
+                        <div class="log-item">
+                            <div class="text-sm text-white">CSG Foods meal service updated</div>
+                            <div class="text-xs text-gray-400">1 hour ago</div>
+                        </div>
+                        
+                        <div class="log-item">
+                            <div class="text-sm text-white">LivClean quality inspection passed</div>
+                            <div class="text-xs text-gray-400">2 hours ago</div>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
         
         <!-- Footer -->
-        <footer class="bg-slate-600 py-4 text-center text-white">
-            <p>© Derivco Facilities Intelligence | Customized for Sifiso Shezi</p>
-            <p class="mt-1">
-                Dynamic Last Updated:
-                <span class="font-semibold" id="last-updated"></span>
-            </p>
-        </footer>
+        <footer class="bg-slate-900 text-center py-4">
+        <p class="text-gray-400 text-sm">
+        Powered by <strong>iKhaya AI</strong> · A division of <strong>ARISAN-SIFISO</strong>
+        </p>
+    <div class="flex justify-center space-x-6 mt-2 text-gray-500 text-sm">
+    <span class="flex items-center space-x-2">
+        <!-- Facilities Steward icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2" />
+        </svg>
+        <span>Facilities Steward</span>
+    </span>
+    <span class="flex items-center space-x-2">
+        <!-- Systems Architect icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20h9M12 4H3m9 16V4" />
+        </svg>
+        <span>Systems Architect</span>
+    </span>
     </div>
-    
+</footer>
+
     <script src="app.js"></script>
 </body>
 </html>
-

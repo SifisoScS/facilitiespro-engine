@@ -12,8 +12,12 @@ from src.routes.asset import asset_bp
 from src.routes.tool import tool_bp
 from src.routes.staff import staff_bp
 from src.routes.dashboard import dashboard_bp
+from src.routes.service_provider import service_provider_bp
 
+# SQL Server configuration
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://sa:00Sif%25%23%26BQR999d0e@DESKTOP-RP20JOJ/DerivcoFacilitiesDB?driver=ODBC+Driver+17+for+SQL+Server'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
 
 # Enable CORS for all routes
@@ -26,6 +30,7 @@ app.register_blueprint(asset_bp, url_prefix='/api')
 app.register_blueprint(tool_bp, url_prefix='/api')
 app.register_blueprint(staff_bp, url_prefix='/api')
 app.register_blueprint(dashboard_bp, url_prefix='/api')
+app.register_blueprint(service_provider_bp, url_prefix='/api')
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
