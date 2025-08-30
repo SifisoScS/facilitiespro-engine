@@ -19,8 +19,12 @@ class FacilitiesCommandCenter {
         const auditElement = document.getElementById('last-audit-date');
         const updatedElement = document.getElementById('last-updated');
         
-        if (auditElement) auditElement.textContent = lastAuditDate;
-        if (updatedElement) updatedElement.textContent = lastUpdated;
+        if (auditElement) {
+          auditElement.textContent = lastAuditDate;
+        }
+        if (updatedElement) {
+          updatedElement.textContent = lastUpdated;
+        }
     }
 
     setupMobileOptimization() {
