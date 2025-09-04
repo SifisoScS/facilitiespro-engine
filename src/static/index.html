@@ -262,6 +262,38 @@
         .service-provider-card i {
             font-size: 1.5rem;
         }
+        
+        /* Compact card styles */
+        .compact-card {
+            padding: 1rem;
+        }
+        .compact-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .compact-subtitle {
+            font-size: 0.9rem;
+        }
+        .compact-text {
+            font-size: 0.85rem;
+        }
+        .compact-image {
+            width: 60px;
+            height: 60px;
+        }
+        .compact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .compact-stat {
+            font-size: 0.9rem;
+        }
+        .compact-stat-number {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -284,119 +316,93 @@
         </header>
         
         <!-- Main Content -->
-        <main class="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
-            <!-- Personalized Welcome Panel -->
-            <section class="bg-blue-900 p-6 rounded-lg border-2 border-teal-500 flex flex-col items-center text-center">
-                <h3 class="text-2xl font-semibold text-white">
+        <main class="container mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
+            <!-- Personalized Welcome Panel - Compact Version -->
+            <section class="bg-blue-900 compact-card rounded-lg border-2 border-teal-500 flex flex-col items-center text-center">
+                <h3 class="compact-title font-semibold text-white">
                     WELCOME, SIFISO SHEZI
                 </h3>
-                <p class="text-teal-400 mt-1 text-lg">
+                <p class="text-teal-400 compact-subtitle">
                     Facilities Steward | Systems Architect
                 </p>
-                <p class="text-white mt-4 max-w-xs">
+                <p class="text-white mt-2 compact-text max-w-xs">
                     "Building the framework for operational excellence through disciplined asset management"
                 </p>
-                <img alt="Profile photo of Sifiso Shezi, a professional facilities steward and systems architect" class="mt-6 rounded-full w-24 h-24 object-cover" height="100" src="https://storage.googleapis.com/a1aa/image/01e67e72-a965-47fb-e044-3967f8bdf21d.jpg" width="100"/>
+                <img alt="Profile photo of Sifiso Shezi, a professional facilities steward and systems architect" class="mt-4 rounded-full compact-image object-cover" height="60" src="https://storage.googleapis.com/a1aa/image/01e67e72-a965-47fb-e044-3967f8bdf21d.jpg" width="60"/>
             </section>
             
-            <!-- Key Metrics Ticker -->
-            <section class="bg-slate-600 p-6 rounded-lg">
-                <h3 class="text-xl font-semibold text-white mb-4">
+            <!-- Key Metrics Ticker - Compact Version -->
+            <section class="bg-slate-600 compact-card rounded-lg">
+                <h3 class="compact-title font-semibold text-white mb-3">
                     TODAY'S SNAPSHOT
                 </h3>
                 
-                <!-- Stores & Infrastructure -->
-                <div class="snapshot-card mb-4">
-                    <div class="snapshot-header">
-                        <div class="snapshot-icon">
-                            <i class="fas fa-warehouse text-white"></i>
+                <div class="compact-grid">
+                    <!-- Stores & Infrastructure -->
+                    <div class="snapshot-card">
+                        <div class="snapshot-header">
+                            <div class="snapshot-icon">
+                                <i class="fas fa-warehouse text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-semibold compact-text">STORES</h4>
                         </div>
-                        <h4 class="font-semibold">STORES & INFRASTRUCTURE</h4>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div><span class="text-lime-400 font-semibold" id="stores-assets">428</span> Assets</div>
-                        <div><span class="text-lime-400 font-semibold" id="stores-accuracy">97.3%</span> Accuracy</div>
-                        <div><span class="text-lime-400 font-semibold" id="stores-workorders">12</span> Work Orders</div>
-                        <div><span class="text-lime-400 font-semibold" id="stores-reorders">3</span> Reorders Needed</div>
-                    </div>
-                </div>
-                
-                <!-- Leitch Landscape -->
-                <div class="snapshot-card mb-4">
-                    <div class="snapshot-header">
-                        <div class="snapshot-icon">
-                            <i class="fas fa-tree text-white"></i>
+                        <div class="compact-stat">
+                            <span class="text-lime-400 font-semibold compact-stat-number" id="stores-assets">428</span> Assets
                         </div>
-                        <h4 class="font-semibold">LEITCH LANDSCAPE</h4>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div><span class="text-lime-400 font-semibold" id="leitch-hours">24</span> Hours This Week</div>
-                        <div><span class="text-lime-400 font-semibold" id="leitch-tasks">9</span> Tasks Completed</div>
-                        <div><span class="text-lime-400 font-semibold" id="leitch-projects">3</span> Active Projects</div>
-                        <div><span class="text-lime-400 font-semibold" id="leitch-compliance">100%</span> Compliance</div>
-                    </div>
-                </div>
-                
-                <!-- Sabeliwe Garden -->
-                <div class="snapshot-card mb-4">
-                    <div class="snapshot-header">
-                        <div class="snapshot-icon">
-                            <i class="fas fa-leaf text-white"></i>
+                    
+                    <!-- Leitch Landscape -->
+                    <div class="snapshot-card">
+                        <div class="snapshot-header">
+                            <div class="snapshot-icon">
+                                <i class="fas fa-tree text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-semibold compact-text">LEITCH</h4>
                         </div>
-                        <h4 class="font-semibold">SABELIWE GARDEN</h4>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div><span class="text-lime-400 font-semibold" id="sabeliwe-hours">18</span> Hours This Week</div>
-                        <div><span class="text-lime-400 font-semibold" id="sabeliwe-tasks">7</span> Tasks Completed</div>
-                        <div><span class="text-lime-400 font-semibold" id="sabeliwe-projects">2</span> Active Projects</div>
-                        <div><span class="text-lime-400 font-semibold" id="sabeliwe-compliance">100%</span> Compliance</div>
-                    </div>
-                </div>
-                
-                <!-- CSG Foods -->
-                <div class="snapshot-card mb-4">
-                    <div class="snapshot-header">
-                        <div class="snapshot-icon">
-                            <i class="fas fa-utensils text-white"></i>
+                        <div class="compact-stat">
+                            <span class="text-lime-400 font-semibold compact-stat-number" id="leitch-hours">24</span> Hours
                         </div>
-                        <h4 class="font-semibold">CSG FOODS</h4>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div><span class="text-lime-400 font-semibold" id="csg-meals">342</span> Meals Served</div>
-                        <div><span class="text-lime-400 font-semibold" id="csg-satisfaction">94%</span> Satisfaction</div>
-                        <div><span class="text-lime-400 font-semibold" id="csg-events">2</span> Special Events</div>
-                        <div><span class="text-lime-400 font-semibold" id="csg-compliance">100%</span> Hygiene Compliance</div>
-                    </div>
-                </div>
-                
-                <!-- LivClean -->
-                <div class="snapshot-card">
-                    <div class="snapshot-header">
-                        <div class="snapshot-icon">
-                            <i class="fas fa-broom text-white"></i>
+                    
+                    <!-- Sabeliwe Garden -->
+                    <div class="snapshot-card">
+                        <div class="snapshot-header">
+                            <div class="snapshot-icon">
+                                <i class="fas fa-leaf text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-semibold compact-text">SABELIWE</h4>
                         </div>
-                        <h4 class="font-semibold">LIVCLEAN</h4>
+                        <div class="compact-stat">
+                            <span class="text-lime-400 font-semibold compact-stat-number" id="sabeliwe-hours">18</span> Hours
+                        </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div><span class="text-lime-400 font-semibold" id="livclean-areas">98%</span> Areas Completed</div>
-                        <div><span class="text-lime-400 font-semibold" id="livclean-quality">4.8/5</span> Quality Score</div>
-                        <div><span class="text-lime-400 font-semibold" id="livclean-requests">2</span> Special Requests</div>
-                        <div><span class="text-lime-400 font-semibold" id="livclean-compliance">100%</span> Compliance</div>
+                    
+                    <!-- CSG Foods -->
+                    <div class="snapshot-card">
+                        <div class="snapshot-header">
+                            <div class="snapshot-icon">
+                                <i class="fas fa-utensils text-white text-sm"></i>
+                            </div>
+                            <h4 class="font-semibold compact-text">CSG FOODS</h4>
+                        </div>
+                        <div class="compact-stat">
+                            <span class="text-lime-400 font-semibold compact-stat-number" id="csg-meals">342</span> Meals
+                        </div>
                     </div>
                 </div>
             </section>
             
-            <!-- ISO 41001 Compliance Badge -->
-            <section class="bg-teal-600 p-6 rounded-lg text-center flex flex-col items-center justify-center">
-                <i class="fas fa-check-circle text-white text-5xl"></i>
-                <p class="text-white mt-4 text-lg font-semibold flex items-center justify-center gap-2">
+            <!-- ISO 41001 Compliance Badge - Compact Version -->
+            <section class="bg-teal-600 compact-card rounded-lg text-center flex flex-col items-center justify-center">
+                <i class="fas fa-check-circle text-white text-3xl"></i>
+                <p class="text-white mt-2 compact-text font-semibold flex items-center justify-center gap-1">
                     <span>✔</span>
-                    ISO 41001:2018 CERTIFIED PROCESSES
+                    ISO 41001:2018
                 </p>
-                <p class="text-white mt-2 text-base max-w-xs">
-                    Facilities Management Standard Compliance
+                <p class="text-white compact-text">
+                    Certified Processes
                 </p>
-                <p class="text-white mt-2 text-sm">
+                <p class="text-white mt-1 text-xs">
                     Last Audit:
                     <span class="font-semibold" id="last-audit-date">2025/08/10</span>
                 </p>
@@ -456,27 +462,27 @@
             </section>
             
             <!-- Content Display Area -->
-            <section class="col-span-1 md:col-span-3 mt-6">
-                <div class="bg-blue-900 p-6 rounded-lg min-h-[400px]" id="provider-content">
+            <section class="col-span-1 md:col-span-3 mt-4">
+                <div class="bg-blue-900 p-4 rounded-lg min-h-[300px]" id="provider-content">
                     <div class="text-center text-white">
-                        <h3 class="text-xl font-semibold mb-4">Select a Service Provider</h3>
+                        <h3 class="text-lg font-semibold mb-3">Select a Service Provider</h3>
                         <p class="text-teal-400">Click on any service provider card above to view detailed information and management options.</p>
                     </div>
                 </div>
             </section>
             
             <!-- Signature System Preview -->
-            <section class="bg-blue-900 p-6 rounded-lg col-span-1 md:col-span-3 mt-6">
-                <h3 class="text-xl font-semibold text-white text-center mb-6">
+            <section class="bg-blue-900 p-4 rounded-lg col-span-1 md:col-span-3 mt-4">
+                <h3 class="text-lg font-semibold text-white text-center mb-4">
                     YOUR SYSTEM AT WORK
                 </h3>
-                <p class="text-white mt-2 text-center italic max-w-xl mx-auto mb-6">
+                <p class="text-white text-center italic max-w-xl mx-auto mb-4 text-sm">
                     "Every tool tracked, every asset accounted for"
                 </p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Performance Overview -->
-                    <div class="bg-slate-700 p-4 rounded-lg">
+                    <div class="bg-slate-700 p-3 rounded-lg">
                         <h4 class="text-lg font-semibold text-teal-400 mb-4">Performance Overview</h4>
                         
                         <div class="system-stat">
