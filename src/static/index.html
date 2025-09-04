@@ -194,7 +194,7 @@
         }
         
         .status-pending {
-            background: rgba(255, 165, 0, 0.3);
+            background: rgba(255, 165, 0, 极速3);
             color: #FFA500;
         }
         
@@ -293,6 +293,96 @@
         .compact-stat-number {
             font-size: 1.1rem;
             font-weight: bold;
+        }
+        
+        /* Feature Integration Cards */
+        .feature-card {
+            background: rgba(0, 51, 102, 0.7);
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 4px solid #008080;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 131, 143, 0.3);
+            background: rgba(0, 51, 102, 0.9);
+        }
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #00FF99;
+        }
+        .feature-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: white;
+        }
+        .feature-desc {
+            font-size: 0.75rem;
+            color: #CCCCCC;
+        }
+        
+        /* Modal enhancements */
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #008080;
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #003366;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #003366;
+        }
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .modal-btn {
+            padding: 8px 16px;
+            background: #008080;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .stats-grid-modal {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .stat-card-modal {
+            background: #f0f8ff;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-number-modal {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #008080;
+        }
+        .stat-label-modal {
+            font-size: 0.8rem;
+            color: #666;
         }
     </style>
 </head>
@@ -406,6 +496,56 @@
                     Last Audit:
                     <span class="font-semibold" id="last-audit-date">2025/08/10</span>
                 </p>
+            </section>
+            
+            <!-- Feature Integration Cards -->
+            <section class="col-span-1 md:col-span-3">
+                <h3 class="text-xl font-semibold text-center text-white mb-4">
+                    STRATEGIC FACILITIES INTELLIGENCE
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <!-- Global FM Intelligence Tracker -->
+                    <div class="feature-card" onclick="showFeatureModal('fmIntelligence')">
+                        <div class="feature-icon">🧠</div>
+                        <div class="feature-title">Global FM Intelligence</div>
+                        <div class="feature-desc">Daily insights from industry sources</div>
+                    </div>
+                    
+                    <!-- Supervisor Stewardship Charter -->
+                    <div class="feature-card" onclick="showFeatureModal('stewardship')">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-title">Stewardship Charter</div>
+                        <div class="feature-desc">Accountability & legacy leadership</div>
+                    </div>
+                    
+                    <!-- KPI & Legacy Dashboard -->
+                    <div class="feature-card" onclick="showFeatureModal('kpiDashboard')">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-title">KPI & Legacy Dashboard</div>
+                        <div class="feature-desc">Visualize impact across all roles</div>
+                    </div>
+                    
+                    <!-- Training & Curriculum Module -->
+                    <div class="feature-card" onclick="showFeatureModal('trainingModule')">
+                        <div class="feature-icon">🎓</div>
+                        <div class="feature-title">Training Module</div>
+                        <div class="feature-desc">Generational programs for FM roles</div>
+                    </div>
+                    
+                    <!-- Cost Awareness & Procurement Intelligence -->
+                    <div class="feature-card" onclick="showFeatureModal('procurementIntel')">
+                        <div class="feature-icon">💰</div>
+                        <div class="feature-title">Procurement Intelligence</div>
+                        <div class="feature-desc">Track savings & optimize purchasing</div>
+                    </div>
+                    
+                    <!-- Sustainability Ledger -->
+                    <div class="feature-card" onclick="showFeatureModal('sustainability')">
+                        <div class="feature-icon">🌱</div>
+                        <div class="feature-title">Sustainability Ledger</div>
+                        <div class="feature-desc">Track energy & waste initiatives</div>
+                    </div>
+                </div>
             </section>
             
             <!-- Service Provider Cards -->
@@ -538,6 +678,22 @@
             </section>
         </main>
         
+        <!-- Feature Modal -->
+        <div id="featureModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle" class="modal-title">Feature Title</h2>
+                    <button class="close-modal" onclick="closeModal()">&times;</button>
+                </div>
+                <div id="modalContent" class="modal-body">
+                    <!-- Content will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Footer -->
         <footer class="bg-slate-900 text-center py-4">
         <p class="text-gray-400 text-sm">
@@ -561,6 +717,340 @@
     </div>
 </footer>
 
+    <script>
+        // Function to show service provider content
+        function showProviderContent(provider) {
+            const contentDiv = document.getElementById('provider-content');
+            let content = '';
+            
+            switch(provider) {
+                case 'stores':
+                    content = `
+                        <h3 class="text-lg font-semibold text-white mb-3">STORES & INFRASTRUCTURE</h3>
+                        <p class="text-teal-400 mb-4">"Precision Management | ISO 41001 Excellence"</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-700 p-3 rounded-lg">
+                                <h4 class="text-teal-400 mb-2">Asset Overview</h4>
+                                <p class="text-white"><span class="text-lime-400 font-bold">428</span> Total Assets</p>
+                                <p class="text-white"><span class="text-lime-400 font-bold">412</span> In Stock</p>
+                                <p class="text-white"><span class="text-lime-400 font-bold">16</span> Checked Out</p>
+                            </div>
+                            <div class="bg-slate-700 p-3 rounded-lg">
+                                <h4 class="text-teal-400 mb-2">Recent Activity</h4>
+                                <p class="text-white text-sm">PROJ-001 checked out (2 mins ago)</p>
+                                <p class="text-white text-sm">New stock received (Today, 09:15)</p>
+                                <p class="text-white text-sm">Monthly inventory completed</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'leitch':
+                    content = `
+                        <h3 class="text-lg font-semibold text-white mb-3">LEITCH LANDSCAPE</h3>
+                        <p class="text-teal-400 mb-4">Commercial Landscaping Services</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-700 p-3 rounded-lg">
+                                <h4 class="text-teal-400 mb-2">Weekly Overview</h4>
+                                <p class="text-white"><span class="text-lime-400 font-bold">24</span> Hours This Week</p>
+                                <p class="text-white"><span class="text-lime-400 font-bold">4</span> Tasks Completed</p>
+                                <p class="text-white"><span class="text-lime-400 font-bold">100%</span> On Schedule</p>
+                            </div>
+                            <div class="bg-slate-700 p-3 rounded-lg">
+                                <h4 class="text-teal-400 mb-2">Recent Activity</h4>
+                                <p class="text-white text-sm">Lawn maintenance completed (Today)</p>
+                                <p class="text-white text-sm">Hedge trimming (Yesterday)</p>
+                                <p class="text-white text-sm">Irrigation check (Monday)</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                // Add cases for other providers...
+                default:
+                    content = `
+                        <div class="text-center text-white">
+                            <h3 class="text-lg font-semibold mb-3">Select a Service Provider</h3>
+                            <p class="text-teal-400">Click on any service provider card above to view detailed information and management options.</p>
+                        </div>
+                    `;
+            }
+            
+            contentDiv.innerHTML = content;
+        }
+        
+        // Function to show feature modal
+        function showFeatureModal(feature) {
+            const modal = document.getElementById('featureModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            let title = '';
+            let content = '';
+            
+            switch(feature) {
+                case 'fmIntelligence':
+                    title = '🧠 Global FM Intelligence Tracker';
+                    content = `
+                        <p class="mb-4 text-gray-700">Capture daily insights from news, blogs, IFMA, vendors, and thought leaders.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h3 class="font-bold text-blue-800 mb-2">Today's Top Insights</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>IFMA releases new sustainability guidelines</li>
+                                <li>Emerging trend: IoT integration in facility management</li>
+                                <li>Vendor update: New energy-efficient solutions available</li>
+                                <li>Industry benchmark: FM productivity increased by 12%</li>
+                            </ul>
+                        </div>
+                        <div class="stats-grid-modal">
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">24</div>
+                                <div class="stat-label-modal">New Insights Today</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">87%</div>
+                                <div class="stat-label-modal">Relevance Score</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">15</div>
+                                <div class="stat-label-modal">Vendor Updates</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">92%</div>
+                                <div class="stat-label-modal">Actionable Insights</div>
+                            </div>
+                        </div>
+                        <button class="modal-btn w-full mt-4">Access Intelligence Portal</button>
+                    `;
+                    break;
+                case 'stewardship':
+                    title = '📋 Supervisor Stewardship Charter';
+                    content = `
+                        <p class="mb-4 text-gray-700">Embed accountability and legacy-driven leadership into daily operations.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h3 class="font-bold text-blue-800 mb-2">Core Principles</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Lead with integrity and transparency</li>
+                                <li>Mentor next-generation facilities professionals</li>
+                                <li>Document institutional knowledge</li>
+                                <li>Uphold ISO 41001 standards in all operations</li>
+                                <li>Drive continuous improvement initiatives</li>
+                            </ul>
+                        </div>
+                        <div class="stats-grid-modal">
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">100%</div>
+                                <div class="stat-label-modal">Adoption Rate</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">24</div>
+                                <div class="stat-label-modal">Leadership Goals</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">18</div>
+                                <div class="stat-label-modal">Mentorship Sessions</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">95%</div>
+                                <div class="stat-label-modal">Compliance Score</div>
+                            </div>
+                        </div>
+                        <button class="modal-btn w-full mt-4">View Charter Details</button>
+                    `;
+                    break;
+                case 'kpiDashboard':
+                    title = '📊 KPI & Legacy Dashboard';
+                    content = `
+                        <p class="mb-4 text-gray-700">Visualize impact across roles—assistants, supervisors, administrators.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h3 class="font-bold text-blue-800 mb-2">Current Performance Metrics</h3>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Operational Efficiency</div>
+                                    <div class="text-green-600">97.3%</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Cost Savings YTD</div>
+                                    <div class="text-green-600">R 245,800</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Sustainability Index</div>
+                                    <div class="text-green-600">88.5%</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Training Completion</div>
+                                    <div class="text-green-600">92%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-grid-modal">
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">42</div>
+                                <div class="stat-label-modal">Active KPIs</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">87%</div>
+                                <div class="stat-label-modal">Targets Achieved</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">15</div>
+                                <div class="stat-label-modal">Legacy Metrics</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">92%</div>
+                                <div class="stat-label-modal">Dashboard Usage</div>
+                            </div>
+                        </div>
+                        <button class="modal-btn w-full mt-4">Open Full Dashboard</button>
+                    `;
+                    break;
+                case 'trainingModule':
+                    title = '🎓 Training & Curriculum Module';
+                    content = `
+                        <p class="mb-4 text-gray-700">Build generational training programs for all FM roles.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h3 class="font-bold text-blue-800 mb-2">Program Status</h3>
+                            <ul class="list-disc pl-5 text-sm">
+                                <li>Assistant FM Curriculum: 95% Complete</li>
+                                <li>Supervisor Development: 87% Complete</li>
+                                <li>Leadership Program: 72% Complete</li>
+                                <li>Technical Skills: 92% Complete</li>
+                                <li>Safety Certification: 100% Complete</li>
+                            </ul>
+                        </div>
+                        <div class="stats-grid-modal">
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">128</div>
+                                <div class="stat-label-modal">Training Modules</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">94%</div>
+                                <div class="stat-label-modal">Completion Rate</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">24</div>
+                                <div class="stat-label-modal">Instructors</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">87%</div>
+                                <div class="stat-label-modal">Satisfaction Score</div>
+                            </div>
+                        </div>
+                        <button class="modal-btn w-full mt-4">Access Training Portal</button>
+                    `;
+                    break;
+                case 'procurementIntel':
+                    title = '💰 Cost Awareness & Procurement Intelligence';
+                    content = `
+                        <p class="mb-4 text-gray-700">Track savings, optimize purchasing, and elevate FM's financial leadership.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h3 class="font-bold text-blue-800 mb-2">Q3 2025 Financial Overview</h3>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Budget Utilization</div>
+                                    <div class="text-green-600">72%</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Cost Avoidance</div>
+                                    <div class="text-green-600">R 128,450</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Vendor Performance</div>
+                                    <div class="text-green-600">94%</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Procurement Cycle</div>
+                                    <div class="text-green-600">4.2 days</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-grid-modal">
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">R 245K</div>
+                                <div class="stat-label-modal">YTD Savings</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">18%</div>
+                                <div class="stat-label-modal">Cost Reduction</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">42</div>
+                                <div class="stat-label-modal">Vendor Partners</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">96%</div>
+                                <div class="stat-label-modal">On-Time Delivery</div>
+                            </div>
+                        </div>
+                        <button class="modal-btn w-full mt-4">View Procurement Analytics</button>
+                    `;
+                    break;
+                case 'sustainability':
+                    title = '🌱 Sustainability Ledger';
+                    content = `
+                        <p class="mb-4 text-gray-700">Track energy, waste, and sustainability initiatives.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                            <h3 class="font-bold text-blue-800 mb-2">2025 Sustainability Metrics</h3>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Energy Reduction</div>
+                                    <div class="text-green-600">18% YTD</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Waste Diversion</div>
+                                    <div class="text-green-600">76%</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Water Conservation</div>
+                                    <div class="text-green-600">22%</div>
+                                </div>
+                                <div class="p-2 bg-white rounded shadow">
+                                    <div class="font-bold">Carbon Footprint</div>
+                                    <div class="text-green-600">Reduced by 15%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-grid-modal">
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">18%</div>
+                                <div class="stat-label-modal">Energy Saved</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">76%</div>
+                                <div class="stat-label-modal">Waste Recycled</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">15</div>
+                                <div class="stat-label-modal">Green Initiatives</div>
+                            </div>
+                            <div class="stat-card-modal">
+                                <div class="stat-number-modal">92%</div>
+                                <div class="stat-label-modal">Compliance Score</div>
+                            </div>
+                        </div>
+                        <button class="modal-btn w-full mt-4">Open Sustainability Dashboard</button>
+                    `;
+                    break;
+            }
+            
+            modalTitle.innerHTML = title;
+            modalContent.innerHTML = content;
+            modal.style.display = 'block';
+        }
+        
+        // Function to close modal
+        function closeModal() {
+            const modal = document.getElementById('featureModal');
+            modal.style.display = 'none';
+        }
+        
+        // Close modal if clicked outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('featureModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
     <script src="app.js"></script>
+
 </body>
 </html>
